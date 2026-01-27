@@ -20,54 +20,66 @@
             <div class="logo-circle"></div>
             <!-- Placeholder for UDSM Logo, using text for now or simple shape -->
             <div class="header-text">
-                <h1>UNIVERSITY OF DAR ES SALAAM</h1>
-                <p>Global Research Impact Tracker</p>
+                <h1>UDSM HISTORY OF BOOKS & JOURNALISM</h1>
+                <p>Preserving the scholarly heritage of the University of Dar es Salaam</p>
             </div>
         </div>
         <nav class="main-nav">
-            <button id="nav-home" class="active">Home</button>
-            <button id="nav-repo">Repository</button>
-            <a href="admin.html" target="_blank" class="nav-link">Admin Dashboard</a>
+            <button id="nav-home" class="active">Archive Home</button>
+            <button id="nav-repo"
+                onclick="document.getElementById('upload-modal').classList.remove('hidden')">Contribute</button>
+            <a href="admin.html" target="_blank" class="nav-link">Librarian Dashboard</a>
         </nav>
         <div class="status-indicator">
             <span id="user-location-status"
                 style="margin-right: 1rem; color: var(--udsm-yellow); font-size: 0.8rem;">Locating...</span>
-            <span class="pulse"></span> Live System
+            <span class="pulse"></span> Live Archive
         </div>
     </header>
 
     <main class="main-content">
         <!-- Hero Map Section -->
-        <section class="hero-map-section">
-            <div id="map"></div>
+        <!-- Metrics Section (New Layout) -->
+        <section class="metrics-section">
+            <div class="metrics-container">
+                <div class="metric-card-horizontal">
+                    <div class="metric-icon">📚</div>
+                    <div class="metric-info">
+                        <h3>Total Journals</h3>
+                        <div class="metric-value" id="journal-count">1,240</div>
+                    </div>
+                </div>
+                <div class="metric-card-horizontal">
+                    <div class="metric-icon">👥</div>
+                    <div class="metric-info">
+                        <h3>Total Readers</h3>
+                        <div class="metric-value" id="reader-count">0</div>
+                    </div>
+                </div>
+                <div class="metric-card-horizontal">
+                    <div class="metric-icon">🌍</div>
+                    <div class="metric-info">
+                        <h3>Countries Reached</h3>
+                        <div class="metric-value" id="country-count">0</div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-            <div class="metrics-overlay">
-                <div class="metric-card">
-                    <h3>Paper Downloads</h3>
-                    <div class="metric-value" id="download-counter">0</div>
-                    <div class="metric-trend">▲ <span id="download-trend">0</span> this hour</div>
-                </div>
-                <div class="metric-card">
-                    <h3>Active Citations</h3>
-                    <div class="metric-value" id="citation-counter">0</div>
-                    <div class="metric-trend">▲ <span id="citation-trend">0</span> this hour</div>
-                </div>
-                <div class="metric-card latest-activity">
-                    <h3>Live Feed</h3>
-                    <ul id="activity-feed">
-                        <!-- Javascript will populate this -->
-                        <li>Waiting for data stream...</li>
-                    </ul>
-                </div>
+        <!-- Search & Filter Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <input type="text" id="journal-search" placeholder="Search for journals, books, authors...">
+                <button class="search-btn">Search</button>
             </div>
         </section>
 
         <!-- Library Section -->
         <section class="library-section">
             <div class="library-header">
-                <h2>UDSM Digital Library</h2>
+                <h2>Archived Journals & Historical Books</h2>
                 <div class="library-controls">
-                    <button class="upload-btn-main" id="upload-trigger">Upload Contribution</button>
+                    <button class="upload-btn-main" id="upload-trigger">Upload Historical Document</button>
                 </div>
             </div>
 
