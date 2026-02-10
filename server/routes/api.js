@@ -235,14 +235,18 @@ module.exports = (io) => {
                 totalBooks,
                 totalReads,
                 totalViews,
-                limit: 500,
-                order: [['createdAt', 'DESC']]
-            })
-        });
-} catch (err) {
-    res.status(500).json({ error: 'Analytics Error' });
-}
+                categoryStats: categoryStats || [],
+                accessByRegion: accessByRegion || [],
+                recent: recent || []
+            });
+        } catch (err) {
+            console.error('Analytics Error:', err);
+            res.status(500).json({
+                error: 'Analytics Failed',
+                message: err.message
+            });
+        }
     });
 
-return router;
+    return router;
 };
