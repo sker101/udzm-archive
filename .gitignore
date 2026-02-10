@@ -1,0 +1,6 @@
+node_modules/
+*.log
+.DS_Store
+.env
+server/database.sqlite
+server/public/uploads/*.pdf
