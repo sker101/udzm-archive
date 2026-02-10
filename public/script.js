@@ -55,59 +55,30 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 async function initGeolocation() {
     try {
-        // Try multiple geolocation services
-        let locationData = null;
+        // Use ipapi.co (HTTPS compatible)
+        const response = await fetch('https://ipapi.co/json/', {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
 
-        // Try ipapi.co first
-        try {
-            const response = await fetch('https://ipapi.co/json/', {
-                method: 'GET',
-                headers: { 'Accept': 'application/json' }
-            });
-            if (response.ok) {
-                locationData = await response.json();
-                console.log('Location from ipapi.co:', locationData);
-            }
-        } catch (e) {
-            console.warn('ipapi.co failed:', e);
-        }
+        if (response.ok) {
+            const data = await response.json();
 
-        // Fallback to ip-api.com if ipapi.co failed
-        if (!locationData || locationData.error) {
-            try {
-                const response = await fetch('http://ip-api.com/json/');
-                if (response.ok) {
-                    const data = await response.json();
-                    locationData = {
-                        country_name: data.country,
-                        city: data.city,
-                        region: data.regionName,
-                        latitude: data.lat,
-                        longitude: data.lon
-                    };
-                    console.log('Location from ip-api.com:', locationData);
-                }
-            } catch (e) {
-                console.warn('ip-api.com failed:', e);
-            }
-        }
-
-        if (locationData && locationData.country_name) {
             currentUserLocation = {
-                country: locationData.country_name,
-                region: locationData.city || locationData.region || locationData.country_name,
-                latitude: locationData.latitude || -6.7924,
-                longitude: locationData.longitude || 39.2083
+                country: data.country_name || 'Tanzania',
+                region: data.city || data.region || 'Dar es Salaam',
+                latitude: data.latitude || -6.7924,
+                longitude: data.longitude || 39.2083
             };
 
             console.log('✓ User location detected:', currentUserLocation);
             updateLocStatus(`${currentUserLocation.region}, ${currentUserLocation.country}`, "#4cd964");
         } else {
-            throw new Error('All geolocation services failed');
+            throw new Error('Geolocation service unavailable');
         }
     } catch (error) {
         console.error('Geolocation failed, using default:', error);
-        // Use a realistic default location (Tanzania/UDSM)
+        // Use default location (Tanzania/UDSM)
         currentUserLocation = {
             country: 'Tanzania',
             region: 'Dar es Salaam',

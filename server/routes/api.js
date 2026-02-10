@@ -185,47 +185,40 @@ module.exports = (io) => {
             // Count DOWNLOAD and READ as "Reads"
             const totalReads = await AccessLog.count({
                 where: {
-                    action: { [Op.or]: ['DOWNLOAD', 'READ'] }
+                    action: ['READ', 'DOWNLOAD']
                 }
             });
-            const totalViews = await AccessLog.count(); // All interactions
 
-            // Unique Countries
-            const countries = await AccessLog.aggregate('country', 'DISTINCT', { plain: false });
+            // Total Views
+            const totalViews = await AccessLog.count({
+                where: {
+                    action: 'VIEW'
+                }
+            });
 
-            // Stats by Category (Using raw query for simplicity and reliability)
-            const [readsByCategory] = await sequelize.query(`
-                SELECT b.category, COUNT(a.id) as count 
-                FROM AccessLogs a 
-                JOIN Books b ON a.book_id = b.id 
-                WHERE a.action IN ('DOWNLOAD', 'READ') 
+            // Category Statistics
+            const [categoryStats] = await sequelize.query(`
+                SELECT 
+                    b.category,
+                    COUNT(DISTINCT b.id) as book_count,
+                    COUNT(CASE WHEN a.action IN ('READ', 'DOWNLOAD') THEN 1 END) as reads,
+                    COUNT(CASE WHEN a.action = 'VIEW' THEN 1 END) as views
+                FROM "Books" b
+                LEFT JOIN "AccessLogs" a ON b.id = a.book_id
                 GROUP BY b.category
+                ORDER BY book_count DESC
             `);
 
-            const [viewsByCategory] = await sequelize.query(`
-                SELECT b.category, COUNT(a.id) as count 
-                FROM AccessLogs a 
-                JOIN Books b ON a.book_id = b.id 
-                WHERE a.action = 'VIEW' 
-                GROUP BY b.category
-            `);
-
-            const [uploadsByCategory] = await sequelize.query(`
-                SELECT category, COUNT(*) as count 
-                FROM Books 
-                GROUP BY category
-            `);
-
-            // Regional Statistics
+            // Regional Statistics - PostgreSQL compatible
             const [accessByRegion] = await sequelize.query(`
                 SELECT 
                     country,
                     region,
                     COUNT(*) as total_access,
-                    SUM(CASE WHEN action IN ('READ', 'DOWNLOAD') THEN 1 ELSE 0 END) as reads,
-                    SUM(CASE WHEN action = 'VIEW' THEN 1 ELSE 0 END) as views
-                FROM AccessLogs
-                WHERE country != 'Unknown'
+                    COUNT(CASE WHEN action IN ('READ', 'DOWNLOAD') THEN 1 END) as reads,
+                    COUNT(CASE WHEN action = 'VIEW' THEN 1 END) as views
+                FROM "AccessLogs"
+                WHERE country != 'Unknown' AND country IS NOT NULL
                 GROUP BY country, region
                 ORDER BY total_access DESC
                 LIMIT 20
@@ -234,32 +227,22 @@ module.exports = (io) => {
             // Recent Activity
             const recent = await AccessLog.findAll({
                 limit: 10,
-                order: [['createdAt', 'DESC']]
+                order: [['createdAt', 'DESC']],
+                attributes: ['id', 'book_title', 'action', 'country', 'region', 'createdAt']
             });
 
             res.json({
+                totalBooks,
                 totalReads,
                 totalViews,
-                activeCountries: countries.length,
-                recent,
-                readsByCategory,
-                viewsByCategory,
-                uploadsByCategory,
-                accessByRegion,
-                // Return all logs with location data for the heatmap (limit to recent 500 for performance)
-                heatmap: await AccessLog.findAll({
-                    attributes: ['country', 'region', 'action'],
-                    where: {
-                        country: { [Op.ne]: 'Unknown' }
-                    },
-                    limit: 500,
-                    order: [['createdAt', 'DESC']]
-                })
-            });
-        } catch (err) {
-            res.status(500).json({ error: 'Analytics Error' });
-        }
+                limit: 500,
+                order: [['createdAt', 'DESC']]
+            })
+        });
+} catch (err) {
+    res.status(500).json({ error: 'Analytics Error' });
+}
     });
 
-    return router;
+return router;
 };
