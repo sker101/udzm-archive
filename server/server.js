@@ -37,8 +37,11 @@ io.on('connection', (socket) => {
 // Database Sync & Seeding
 const PORT = process.env.PORT || 3000;
 
-sequelize.sync({ force: false }).then(async () => {
-    console.log('Database synced');
+// Force sync in production ONCE to create tables (change to false after first deploy)
+const shouldForceSync = process.env.FORCE_DB_SYNC === 'true';
+
+sequelize.sync({ force: shouldForceSync, alter: !shouldForceSync }).then(async () => {
+    console.log(`Database synced (force: ${shouldForceSync})`);
 
     // Seed if empty
     const count = await Book.count();

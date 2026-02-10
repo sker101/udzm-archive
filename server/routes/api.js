@@ -240,10 +240,15 @@ module.exports = (io) => {
                 recent: recent || []
             });
         } catch (err) {
-            console.error('Analytics Error:', err);
+            console.error('Analytics Error Details:', {
+                message: err.message,
+                stack: err.stack,
+                name: err.name
+            });
             res.status(500).json({
                 error: 'Analytics Failed',
-                message: err.message
+                message: err.message,
+                details: process.env.NODE_ENV !== 'production' ? err.stack : 'Check server logs'
             });
         }
     });
