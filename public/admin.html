@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UDSM | Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="admin-body">
+
+    <header class="header">
+        <div class="logo-container">
+            <img src="assets/udsm-logo.png" alt="UDSM Logo" class="udsm-logo">
+            <div class="header-text">
+                <h1>UDSM ADMIN PANEL</h1>
+                <p>Global Research Impact Tracker - Backend Overview</p>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-btn">Archive Home</a>
+            <a href="contributors.html" class="nav-btn">Contribute & Explore</a>
+            <a href="dashboard.html" class="nav-btn">Live Dashboard</a>
+            <a href="admin.html" class="nav-btn active">Librarian Dashboard</a>
+        </nav>
+        <div class="status-indicator">
+            <span class="pulse"></span> Monitoring
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <!-- Horizontal Admin Menu -->
+        <nav class="admin-menubar">
+            <div class="admin-menu-items">
+                <a href="#" class="active"><span class="icon">📊</span> Overview</a>
+                <a href="#"><span class="icon">👥</span> User Management</a>
+                <a href="#"><span class="icon">📚</span> Content Repository</a>
+                <a href="#"><span class="icon">⚙️</span> Settings</a>
+            </div>
+            <a href="index.html" class="back-link-box"><span class="icon">⬅️</span> Back to Main Site</a>
+        </nav>
+
+        <!-- Main Content (Now Full Width) -->
+        <main class="admin-main">
+            <!-- Top Stats Row -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-icon u-orange">📂</div>
+                    <div class="stat-info">
+                        <h4>Total Uploads</h4>
+                        <div class="number" id="admin-uploads">-</div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon u-blue">📖</div>
+                    <div class="stat-info">
+                        <h4>Total Reads</h4>
+                        <div class="number" id="admin-reads">-</div>
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon u-green">🟢</div>
+                    <div class="stat-info">
+                        <h4>Active Sessions</h4>
+                        <div class="number" id="admin-sessions">42</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two Column Section -->
+            <div class="dashboard-grid">
+                <!-- Main Log -->
+                <div class="card panel-log">
+                    <div class="card-header">
+                        <h3>Live Transaction Log</h3>
+                        <span class="badge">Real-time</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="activity-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Action</th>
+                                    <th>Location</th>
+                                    <th>Resource</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-log-body">
+                                <tr>
+                                    <td colspan="4">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Regional Access Statistics -->
+                <div class="card panel-countries">
+                    <div class="card-header">
+                        <h3>Top Regions by Access</h3>
+                        <span class="badge">Live Data</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="activity-table">
+                            <thead>
+                                <tr>
+                                    <th>Region / Country</th>
+                                    <th class="text-right">Reads</th>
+                                    <th class="text-right">Views</th>
+                                    <th class="text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-regions-body">
+                                <tr>
+                                    <td colspan="4">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Charts Section -->
+            <div class="dashboard-grid" style="margin-top: 2rem;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Readership by Category</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Content Distribution</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- We reuse the same script logic but will check body class to toggle admin features -->
+    <!-- Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

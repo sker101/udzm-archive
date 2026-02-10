@@ -1,0 +1,25 @@
+{
+  "name": "udsm-archive-server",
+  "version": "1.0.0",
+  "description": "Backend for UDSM Article Archive",
+  "main": "server.js",
+  "scripts": {
+    "prestart": "lsof -ti:3000 | xargs kill -9 || true",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "multer": "^2.0.2",
+    "sequelize": "^6.37.1",
+    "socket.io": "^4.7.5",
+    "sqlite3": "^5.1.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

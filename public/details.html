@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal Details | UDSM Archive</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for details page map */
+        #book-map {
+            height: 400px;
+            width: 100%;
+            border-radius: 12px;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="logo-container">
+            <img src="assets/udsm-logo.png" alt="UDSM Logo" class="udsm-logo">
+            <div class="header-text">
+                <h1>UDSM HISTORY OF BOOKS & JOURNALISM</h1>
+                <p>Preserving the scholarly heritage of the University of Dar es Salaam</p>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-btn">Archive Home</a>
+            <a href="contributors.html" class="nav-btn">Contribute & Explore</a>
+            <a href="dashboard.html" class="nav-btn">Live Dashboard</a>
+            <a href="admin.html" class="nav-btn">Librarian Dashboard</a>
+        </nav>
+    </header>
+
+    <main class="main-content tjet-layout">
+        <!-- TJET Banner Section -->
+        <section class="tjet-banner">
+            <div class="banner-overlay">
+                <div class="banner-logo">
+                    <img src="https://commons.udsm.ac.tz/tjet/vol44/iss4/logo.png" alt="UDSM TJET Logo"
+                        onerror="this.src='https://placehold.co/100x100?text=UDSM'">
+                </div>
+                <div class="banner-text">
+                    <h1 id="detail-title-banner">TANZANIA JOURNAL OF ENGINEERING AND TECHNOLOGY</h1>
+                </div>
+            </div>
+        </section>
+
+        <div class="content-wrapper">
+            <!-- Main Content Area -->
+            <div class="primary-content">
+                <div class="issue-header">
+                    <p class="breadcrumb">Home > Archive > <span id="breadcrumb-title">Document</span></p>
+                    <h2 id="detail-title">Loading Document Details...</h2>
+                    <p class="article-authors" id="detail-author" style="margin-top: 1rem; font-size: 1.2rem;"></p>
+                </div>
+
+                <div class="details-layout-custom">
+                    <div class="live-activity-section">
+                        <h2>Global Reach</h2>
+                        <p class="subtitle">Real-time reader engagement from around the world</p>
+
+                        <div class="map-wrapper">
+                            <div id="book-map"></div>
+                            <div class="map-stats-overlay">
+                                <div class="stat-item">
+                                    <span class="value" id="detail-readers">0</span>
+                                    <span class="label">Current Readers</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="value" id="detail-views">0</span>
+                                    <span class="label">Total Views</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="value" id="detail-citations">0</span>
+                                    <span class="label">Citations</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="book-activity-log">
+                            <h3>Recent Activity</h3>
+                            <ul id="details-activity-feed" class="activity-list">
+                                <li class="empty-msg">No recent activity for this book.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="book-info-section">
+                        <div class="book-cover-large">
+                            <div class="cover-placeholder" id="detail-cover">📖</div>
+                        </div>
+                        <div class="book-meta">
+                            <p class="publish-date">Published: <span id="detail-year">...</span></p>
+                            <div class="action-buttons">
+                                <button class="read-btn">Download PDF</button>
+                                <button class="cite-btn">Cite Volume</button>
+                            </div>
+                            <div class="abstract-box">
+                                <h4>Abstract</h4>
+                                <p id="detail-abstract">Loading abstract...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-block">
+                    <ul class="sidebar-links">
+                        <li><a href="index.html">Journal Home</a></li>
+                        <li><a href="#">About This Journal</a></li>
+                        <li><a href="#">Aims & Scope</a></li>
+                        <li><a href="#">Editorial Board</a></li>
+                        <li><a href="#">Policies</a></li>
+                        <li><a href="#">Instructions for Authors</a></li>
+                        <li><a href="#">Publication Ethics Statement</a></li>
+                        <li><a href="admin.html">Librarian Dashboard</a></li>
+                    </ul>
+                </div>
+                <div class="sidebar-block action-block">
+                    <button class="sidebar-btn">Submit Article</button>
+                    <button class="sidebar-btn secondary">Receive Email Notices</button>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Leaflet Heatmap Plugin -->
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

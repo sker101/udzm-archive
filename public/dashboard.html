@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UDSM | Global Impact Dashboard</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Dashboard Specific Styles */
+        body.dashboard-body {
+            background-color: #0b0c10;
+            color: #c5c6c7;
+            overflow-x: hidden;
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(11, 12, 16, 0.95);
+            border-bottom: 1px solid #1f2833;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-sizing: border-box;
+        }
+
+        .dashboard-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard-title h1 {
+            font-size: 1.5rem;
+            color: #66fcf1;
+            margin: 0;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .dashboard-title span {
+            font-size: 0.8rem;
+            color: #45a29e;
+            display: block;
+        }
+
+        .dashboard-nav a {
+            color: #c5c6c7;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .dashboard-nav a:hover,
+        .dashboard-nav a.active {
+            color: #66fcf1;
+        }
+
+        .dashboard-main {
+            /* Header is now sticky (in flow), so we don't need huge padding, just a bit of gap */
+            padding-top: 10px;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            grid-template-rows: 100%;
+            gap: 20px;
+            /* Header is 70px, so main should be 100vh - 70px to avoid scroll */
+            height: calc(100vh - 70px);
+            box-sizing: border-box;
+            background: #0b0c10;
+        }
+
+        /* Map Section */
+        .map-section {
+            grid-column: 1 / 2;
+            position: relative;
+            background: #1f2833;
+            border-radius: 0 16px 16px 0;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(102, 252, 241, 0.1);
+            margin: 20px 0 20px 20px;
+            height: calc(100vh - 100px);
+        }
+
+        #global-map {
+            height: 100%;
+            width: 100%;
+            background: #0b0c10;
+        }
+
+        .map-overlay-stats {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(11, 12, 16, 0.8);
+            backdrop-filter: blur(8px);
+            padding: 15px;
+            border-radius: 12px;
+            z-index: 500;
+            border-left: 4px solid #66fcf1;
+        }
+
+        .map-stat {
+            margin-bottom: 10px;
+        }
+
+        .map-stat:last-child {
+            margin-bottom: 0;
+        }
+
+        .map-stat .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            display: block;
+        }
+
+        .map-stat .label {
+            font-size: 0.8rem;
+            color: #45a29e;
+            text-transform: uppercase;
+        }
+
+        /* Sidebar Stats */
+        .dashboard-sidebar {
+            grid-column: 2 / 3;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px 20px 20px 0;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .glass-card {
+            background: rgba(31, 40, 51, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(102, 252, 241, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .stat-grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .mini-stat h3 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: #fff;
+        }
+
+        .mini-stat p {
+            margin: 5px 0 0;
+            font-size: 0.7rem;
+            color: #45a29e;
+            text-transform: uppercase;
+        }
+
+        .activity-section {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .activity-section h2 {
+            font-size: 1.2rem;
+            color: #66fcf1;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #45a29e;
+            padding-bottom: 10px;
+        }
+
+        .feed-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+            flex-grow: 1;
+            scrollbar-width: thin;
+            scrollbar-color: #45a29e #1f2833;
+        }
+
+        .feed-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .feed-list::-webkit-scrollbar-track {
+            background: #1f2833;
+        }
+
+        .feed-list::-webkit-scrollbar-thumb {
+            background-color: #45a29e;
+            border-radius: 20px;
+        }
+
+        .feed-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(69, 162, 158, 0.2);
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        .feed-item:last-child {
+            border-bottom: none;
+        }
+
+        .feed-content {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .feed-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feed-action {
+            font-weight: 600;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .feed-detail {
+            font-size: 0.8rem;
+            color: #c5c6c7;
+        }
+
+        .feed-meta {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .feed-icon {
+            font-size: 1.2rem;
+            margin-right: 12px;
+            color: #66fcf1;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #66fcf1;
+            box-shadow: 0 0 10px #66fcf1;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="dashboard-body">
+
+    <header class="header">
+        <div class="logo-container">
+            <img src="assets/udsm-logo.png" alt="UDSM Logo" class="udsm-logo">
+            <!-- UDSM Official Logo -->
+            <div class="header-text">
+                <h1>UDSM HISTORY OF BOOKS & JOURNALISM</h1>
+                <p>Preserving the scholarly heritage of the University of Dar es Salaam</p>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-btn">Archive Home</a>
+            <a href="contributors.html" class="nav-btn">Contribute & Explore</a>
+            <a href="dashboard.html" class="nav-btn active">Live Dashboard</a>
+            <a href="admin.html" class="nav-btn">Librarian Dashboard</a>
+        </nav>
+        <div class="status-indicator">
+            <span id="user-location-status"
+                style="margin-right: 1rem; color: var(--udsm-yellow); font-size: 0.8rem;">Locating...</span>
+            <span class="pulse"></span> Live Archive
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <!-- Global Map -->
+        <section class="map-section">
+            <div id="global-map"></div>
+            <div class="map-overlay-stats">
+                <div class="map-stat">
+                    <span class="value" id="dash-countries">0</span>
+                    <span class="label">Countries Live</span>
+                </div>
+                <div class="map-stat">
+                    <span class="value" id="dash-live-readers">0</span>
+                    <span class="label">Active Sessions</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sidebar Stats -->
+        <aside class="dashboard-sidebar">
+            <!-- Key Metrics -->
+            <div class="glass-card stat-grid-container">
+                <div class="mini-stat">
+                    <h3 id="dash-total-views">0</h3>
+                    <div class="label">Total Views</div>
+                </div>
+                <div class="mini-stat">
+                    <h3 id="dash-total-reads">0</h3>
+                    <div class="label">Downloads</div>
+                </div>
+                <div class="mini-stat">
+                    <h3 id="dash-total-clicks">0</h3>
+                    <div class="label">Interactions</div>
+                </div>
+                <div class="mini-stat">
+                    <h3 id="dash-citations">0</h3>
+                    <div class="label">Citations</div>
+                </div>
+            </div>
+
+            <!-- Live Feed -->
+            <div class="glass-card activity-section">
+                <h2>Live Activity Feed</h2>
+                <ul class="feed-list" id="dashboard-feed">
+                    <li class="feed-item">
+                        <span class="feed-info">
+                            <span class="feed-action" style="opacity:0.7">Waiting for activity...</span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

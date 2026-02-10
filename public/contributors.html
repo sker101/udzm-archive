@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UDSM | Contributors & Archive</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="logo-container">
+            <img src="assets/udsm-logo.png" alt="UDSM Logo" class="udsm-logo">
+            <div class="header-text">
+                <h1>UDSM HISTORY OF BOOKS & JOURNALISM</h1>
+                <p>Preserving the scholarly heritage of the University of Dar es Salaam</p>
+            </div>
+        </div>
+        <nav class="main-nav">
+            <a href="index.html" class="nav-btn">Archive Home</a>
+            <a href="contributors.html" class="nav-btn active">Contribute & Explore</a>
+            <a href="dashboard.html" class="nav-btn">Live Dashboard</a>
+            <a href="admin.html" class="nav-btn">Librarian Dashboard</a>
+        </nav>
+        <div class="status-indicator">
+            <span id="user-location-status"
+                style="margin-right: 1rem; color: var(--udsm-yellow); font-size: 0.8rem;">Locating...</span>
+            <span class="pulse"></span> Live Archive
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <input type="text" id="journal-search" placeholder="Search for journals, books, authors...">
+                <button class="search-btn">Search Archive</button>
+                <button class="upload-btn-main" id="upload-trigger">Upload New Document</button>
+            </div>
+        </section>
+
+        <!-- Library Section -->
+        <section class="library-section">
+            <div class="library-header">
+
+            </div>
+
+            <!-- Category Filter -->
+            <div class="category-filter">
+                <button class="category-btn active" data-category="all">All</button>
+                <button class="category-btn" data-category="Engineering">Engineering</button>
+                <button class="category-btn" data-category="Technology">Technology</button>
+                <button class="category-btn" data-category="Science">Science</button>
+                <button class="category-btn" data-category="Medicine">Medicine</button>
+                <button class="category-btn" data-category="Social Sciences">Social Sciences</button>
+                <button class="category-btn" data-category="General">General</button>
+            </div>
+
+            <div id="library-grid" class="library-grid">
+                <!-- Books injected here -->
+                <p>Loading Archive...</p>
+            </div>
+        </section>
+
+        <!-- Upload Modal (Simplified - Upload Only) -->
+        <div id="upload-modal" class="repo-overlay hidden">
+            <div class="repo-modal upload-only">
+                <div class="repo-header">
+                    <h2>Contribute to Library</h2>
+                    <button id="close-upload">×</button>
+                </div>
+                <div class="repo-content centered-form">
+                    <form id="upload-form">
+                        <input type="text" id="resource-title" placeholder="Document Title *" required>
+                        <input type="text" id="resource-author" placeholder="Author(s) *" required>
+                        <input type="number" id="resource-year" placeholder="Publication Year" min="1900" max="2100">
+                        <select id="resource-type" required>
+                            <option value="">Select Type *</option>
+                            <option value="Paper">Research Paper</option>
+                            <option value="Book">Book</option>
+                            <option value="Journal">Journal Article</option>
+                        </select>
+                        <select id="resource-category">
+                            <option value="General">General</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Science">Science</option>
+                            <option value="Medicine">Medicine</option>
+                            <option value="Social Sciences">Social Sciences</option>
+                        </select>
+                        <textarea id="resource-abstract" placeholder="Abstract (optional)" rows="4"></textarea>
+                        <input type="file" id="resource-file" accept=".pdf" required>
+                        <button type="submit" class="upload-btn">Submit Document</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
